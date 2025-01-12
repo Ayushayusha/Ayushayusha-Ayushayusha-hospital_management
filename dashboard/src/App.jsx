@@ -1,0 +1,157 @@
+import React, { useContext, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Dashboard from "./components/Dashboard";
+import Login from "./components/Login";
+import AddNewDoctor from "./components/AddNewDoctor";
+import Messages from "./components/Messages";
+import Doctors from "./components/Doctors";
+import { Context } from "./main";
+import axios from "axios";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Sidebar from "./components/Sidebar";
+import AddNewAdmin from "./components/AddNewAdmin";
+import "./App.css";
+
+const App = () => {
+  const { isAuthenticated, setIsAuthenticated, admin, setAdmin } =
+    useContext(Context);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4000/api/v1/user/admin/me",
+          {
+            withCredentials: true,
+          }
+        );
+        setIsAuthenticated(true);
+        setAdmin(response.data.user);
+      } catch (error) {
+        setIsAuthenticated(false);
+        setAdmin({});
+      }
+    };
+    fetchUser();
+  }, [isAuthenticated]);
+
+  return (
+    <Router>
+      <Sidebar />
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/doctor/addnew" element={<AddNewDoctor />} />
+        <Route path="/admin/addnew" element={<AddNewAdmin />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/doctors" element={<Doctors />} />
+      </Routes>
+      <ToastContainer position="top-center" />
+    </Router>
+  );
+};
+
+export default App;
+
+// import React, { useContext, useEffect, useState } from "react";
+// import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+// import Dashboard from "./components/Dashboard";
+// import Login from "./components/Login";
+// import AddNewDoctor from "./components/AddNewDoctor";
+// import Messages from "./components/Messages";
+// import Doctors from "./components/Doctors";
+// import AddNewAdmin from "./components/AddNewAdmin";
+// import Sidebar from "./components/Sidebar";
+// import { Context } from "./main";
+// import axios from "axios";
+// import { ToastContainer } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
+// import "./App.css";
+
+// // Protected Route Component
+// const ProtectedRoute = ({ isAuthenticated, children }) => {
+//   return isAuthenticated ? children : <Navigate to="/login" />;
+// };
+
+// const App = () => {
+//   const { isAuthenticated, setIsAuthenticated, admin, setAdmin } =
+//     useContext(Context);
+//   const [loading, setLoading] = useState(true); // State for loading
+
+//   // Fetch user authentication state on mount
+//   useEffect(() => {
+//     const fetchUser = async () => {
+//       try {
+//         const response = await axios.get(
+//           "http://localhost:4000/api/v1/user/admin/me",
+//           { withCredentials: true }
+//         );
+//         setIsAuthenticated(true);
+//         setAdmin(response.data.user);
+//       } catch (error) {
+//         setIsAuthenticated(false);
+//         setAdmin({});
+//       } finally {
+//         setLoading(false); // Stop loading once check is done
+//       }
+//     };
+//     fetchUser();
+//   }, []);
+
+//   if (loading) {
+//     return <div>Loading...</div>; // Show a loading indicator while fetching
+//   }
+
+//   return (
+//     <Router>
+//       {isAuthenticated && <Sidebar />}
+//       <Routes>
+//         <Route
+//           path="/"
+//           element={
+//             <ProtectedRoute isAuthenticated={isAuthenticated}>
+//               <Dashboard />
+//             </ProtectedRoute>
+//           }
+//         />
+//         <Route path="/login" element={<Login />} />
+//         <Route
+//           path="/doctor/addnew"
+//           element={
+//             <ProtectedRoute isAuthenticated={isAuthenticated}>
+//               <AddNewDoctor />
+//             </ProtectedRoute>
+//           }
+//         />
+//         <Route
+//           path="/admin/addnew"
+//           element={
+//             <ProtectedRoute isAuthenticated={isAuthenticated}>
+//               <AddNewAdmin />
+//             </ProtectedRoute>
+//           }
+//         />
+//         <Route
+//           path="/messages"
+//           element={
+//             <ProtectedRoute isAuthenticated={isAuthenticated}>
+//               <Messages />
+//             </ProtectedRoute>
+//           }
+//         />
+//         <Route
+//           path="/doctors"
+//           element={
+//             <ProtectedRoute isAuthenticated={isAuthenticated}>
+//               <Doctors />
+//             </ProtectedRoute>
+//           }
+//         />
+//       </Routes>
+//       <ToastContainer position="top-center" />
+//     </Router>
+//   );
+// };
+
+// export default App;
